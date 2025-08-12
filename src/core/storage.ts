@@ -65,22 +65,28 @@ export async function addWeightLog(entry: WeightLogEntry): Promise<void> {
   }
 }
 
-// 
-
 /**
- * Deletes a weight log entry by date and persists the updated list.
+ * Deletes a weight log entry for the given date and persists the updated list.
+ * If no entry matches the date, the logs remain unchanged. The date string
+ * must match exactly the ISO date (YYYY-MM-DD) used when adding logs.
  */
 export async function deleteWeightLog(date: string): Promise<void> {
   const logs = await loadWeightLogs();
-  const updatedLogs = logs.filter((entry) => entry.date !== date);
+  const filtered = logs.filter((e) => e.date !== date);
+  if (filtered.length === logs.length) {
+    // no change
+    return;
+  }
   try {
-    await AsyncStorage.setItem(WEIGHT_LOGS_KEY, JSON.stringify(updatedLogs));
+    await AsyncStorage.setItem(WEIGHT_LOGS_KEY, JSON.stringify(filtered));
   } catch (e) {
     // ignore
   }
 }
+
 // ----- Daily Summaries -----
-// ----- Daily Summaries -----
+
+/**
  * Loads all persisted daily summaries. Returns an empty array if none exist.
  */
 export async function loadDailySummaries(): Promise<DailySummary[]> {
@@ -118,37 +124,3 @@ export async function clearAllData(): Promise<void> {
   try {
     await AsyncStorage.multiRemove([PROFILE_KEY, WEIGHT_LOGS_KEY, DAILY_SUMMARIES_KEY]);
   } catch (e) {
-    // ignore
-  }
-}
-
-/**
- * Exports all persisted data as a CSV string. The CSV will contain two
- * sections: one for weight logs and one for daily summaries. Each section
- * starts with a header row describing the columns. Weight logs include
- * `date` and `weightKg` columns. Daily summaries include `date`, `steps`,
- * `distanceKm`, `kcalWalk`, `bmrKCal`, and `tdee` columns. If no data
- * exists, returns an empty string. Consumers can use this string to share
- * or save the data (e.g. via the Share API).
- */
-export async function exportDataAsCsv(): Promise<string> {
-  const weightLogs = await loadWeightLogs();
-  const summaries = await loadDailySummaries();
-  let csv = '';
-  if (weightLogs.length > 0) {
-    csv += 'Weight Logs\n';
-    csv += 'date,weightKg\n';
-    for (const log of weightLogs) {
-      csv += `${log.date},${log.weightKg}\n`;
-    }
-    csv += '\n';
-  }
-  if (summaries.length > 0) {
-    csv += 'Daily Summaries\n';
-    csv += 'date,steps,distanceKm,kcalWalk,bmrKCal,tdee\n';
-    for (const s of summaries) {
-      csv += `${s.date},${s.steps},${s.distanceKm},${s.kcalWalk},${s.bmrKCal},${s.tdee}\n`;
-    }
-  }
-  return csv;
-}
