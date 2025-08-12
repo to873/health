@@ -12,7 +12,6 @@ export type BmrFormula = 'mifflin';
  * User profile containing static anthropometrics and preferences. Weight
  * should reflect the most recent entry from `weightLogs`. Step length is
  * stored explicitly so that user overrides persist.
-  * The stepGoal stores the user's daily target steps.
  */
 export interface Profile {
   id: string;
@@ -22,7 +21,13 @@ export interface Profile {
   weightKg: number;
   stepLengthM: number;
   bmrFormula: BmrFormula;
-stepGoal?: number;
+  /**
+   * Daily step goal for the user. This value represents the target
+   * number of steps the user aims to hit each day. It can be left
+   * undefined if no goal is set. Onboarding should prompt for this
+   * value and settings should allow editing it.
+   */
+  stepGoal?: number;
 }
 
 /**

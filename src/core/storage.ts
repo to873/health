@@ -124,3 +124,37 @@ export async function clearAllData(): Promise<void> {
   try {
     await AsyncStorage.multiRemove([PROFILE_KEY, WEIGHT_LOGS_KEY, DAILY_SUMMARIES_KEY]);
   } catch (e) {
+    // ignore
+  }
+}
+
+/**
+ * Exports all persisted data as a CSV string. The CSV will contain two
+ * sections: one for weight logs and one for daily summaries. Each section
+ * starts with a header row describing the columns. Weight logs include
+ * `date` and `weightKg` columns. Daily summaries include `date`, `steps`,
+ * `distanceKm`, `kcalWalk`, `bmrKCal`, and `tdee` columns. If no data
+ * exists, returns an empty string. Consumers can use this string to share
+ * or save the data (e.g. via the Share API).
+ */
+export async function exportDataAsCsv(): Promise<string> {
+  const weightLogs = await loadWeightLogs();
+  const summaries = await loadDailySummaries();
+  let csv = '';
+  if (weightLogs.length > 0) {
+    csv += 'Weight Logs\n';
+    csv += 'date,weightKg\n';
+    for (const log of weightLogs) {
+      csv += `${log.date},${log.weightKg}\n`;
+    }
+    csv += '\n';
+  }
+  if (summaries.length > 0) {
+    csv += 'Daily Summaries\n';
+    csv += 'date,steps,distanceKm,kcalWalk,bmrKCal,tdee\n';
+    for (const s of summaries) {
+      csv += `${s.date},${s.steps},${s.distanceKm},${s.kcalWalk},${s.bmrKCal},${s.tdee}\n`;
+    }
+  }
+  return csv;
+}
