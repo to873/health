@@ -1,0 +1,14 @@
+{
+  "name": "health-app-phase1",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@kingstinct/react-native-healthkit": "^1.0.0",
+    "react-native-health-connect": "^0.9.0",
+    "@react-native-async-storage/async-storage": "^1.20.0"
+  }
+}
