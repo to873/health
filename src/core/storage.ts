@@ -108,20 +108,6 @@ export async function clearAllData(): Promise<void> {
     // ignore
   }
 }
-/**
- * Removes all persisted data from AsyncStorage. This includes the profile,
- * weight logs, and daily summaries. Use this for GDPR-compliant data
- * deletion flows. It resolves once all keys have been cleared. Errors are
- * silently ignored to avoid blocking the UI.
- */
-export async function clearAllData(): Promise<void> {
-  try {
-    await AsyncStorage.multiRemove([PROFILE_KEY, WEIGHT_LOGS_KEY, DAILY_SUMMARIES_KEY]);
-  } catch (e) {
-    // ignore
-  }
-}
-
 
 /**
  * Exports all persisted data as a CSV string. The CSV will contain two
