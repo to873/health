@@ -65,7 +65,21 @@ export async function addWeightLog(entry: WeightLogEntry): Promise<void> {
   }
 }
 
-// ----- Daily Summaries -----
+// 
+
+/**
+ * Deletes a weight log entry by date and persists the updated list.
+ */
+export async function deleteWeightLog(date: string): Promise<void> {
+  const logs = await loadWeightLogs();
+  const updatedLogs = logs.filter((entry) => entry.date !== date);
+  try {
+    await AsyncStorage.setItem(WEIGHT_LOGS_KEY, JSON.stringify(updatedLogs));
+  } catch (e) {
+    // ignore
+  }
+}
+----- Daily Summaries -----
 
 /**
  * Loads all persisted daily summaries. Returns an empty array if none exist.
