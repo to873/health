@@ -79,9 +79,8 @@ export async function deleteWeightLog(date: string): Promise<void> {
     // ignore
   }
 }
------ Daily Summaries -----
-
-/**
+// ----- Daily Summaries -----
+// ----- Daily Summaries -----
  * Loads all persisted daily summaries. Returns an empty array if none exist.
  */
 export async function loadDailySummaries(): Promise<DailySummary[]> {
